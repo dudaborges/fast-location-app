@@ -5,6 +5,7 @@ import 'package:app_fast_location/src/modules/home/components/last_address.dart'
 import 'package:app_fast_location/src/modules/home/controller/cep_controller.dart';
 import 'package:app_fast_location/src/routes/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart'; // Adicione esta linha
 
 class HomePage extends StatefulWidget {
   final CepController controller;
@@ -17,6 +18,25 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _cepController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _requestLocationPermission(); // Chame a função aqui
+  }
+
+  Future<void> _requestLocationPermission() async {
+    var status = await Permission.location.status;
+    if (status.isDenied) {
+      if (await Permission.location.request().isGranted) {
+        // Permissão concedida
+      } else {
+        print('Permissão de localização negada.');
+      }
+    } else if (status.isGranted) {
+      // Permissão já concedida
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +127,9 @@ class _HomePageState extends State<HomePage> {
                               backgroundColor: AppColors.primaryColor,
                               foregroundColor: Colors.white,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              // Lógica para traçar a rota
+                            },
                             child: Text('Traçar Rota'),
                           ),
                         ),
